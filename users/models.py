@@ -3,9 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from studying.models import NULLABLE, Lesson, Course
 
 
-
-
-
 # Create your models here.
 class User(AbstractUser):
     username = None
@@ -30,8 +27,8 @@ class User(AbstractUser):
 class Payment(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='Пользователь')
     date = models.DateTimeField(auto_now_add=True, verbose_name='')
-    paid_lesson = models.ForeignKey('Lesson', on_delete=models.CASCADE, verbose_name='', **NULLABLE)
-    paid_course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='', **NULLABLE)
+    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='', **NULLABLE)
+    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='', **NULLABLE)
     deposit = models.IntegerField(verbose_name='')
     method_choices = {"наличными": "наличными", "переводом": "переводом"}
     method = models.CharField(max_length=9, choices=method_choices, verbose_name='')
