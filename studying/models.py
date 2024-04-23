@@ -1,7 +1,5 @@
 from django.db import models
-
-from users.models import NULLABLE
-
+NULLABLE = {'null': True, 'blank': True}
 
 # Create your models here.
 class Course(models.Model):

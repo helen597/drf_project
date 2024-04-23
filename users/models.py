@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from studying.models import NULLABLE, Lesson, Course
 
 
-NULLABLE = {'null': True, 'blank': True}
+
 
 
 # Create your models here.
@@ -25,3 +26,21 @@ class User(AbstractUser):
         verbose_name_plural = 'пользователи'
         ordering = ('email',)
         
+
+class Payment(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='Пользователь')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='')
+    paid_lesson = models.ForeignKey('Lesson', on_delete=models.CASCADE, verbose_name='', **NULLABLE)
+    paid_course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='', **NULLABLE)
+    deposit = models.IntegerField(verbose_name='')
+    method_choices = {"наличными": "наличными", "переводом": "переводом"}
+    method = models.CharField(max_length=9, choices=method_choices, verbose_name='')
+
+    def __str__(self):
+        return (f'{self.date} - {self.deposit} рублей {self.method} от {self.user} '
+                f'за {self.paid_course if self.paid_course else self.paid_lesson}')
+
+    class Meta:
+        verbose_name = 'платёж'
+        verbose_name_plural = 'платежи'
+        ordering = ('-date',)
