@@ -5,6 +5,7 @@ from django.contrib.auth.views import LogoutView, PasswordResetConfirmView, Pass
 from django.urls import path, reverse_lazy
 from users.views import UserCreateAPIView, UserUpdateAPIView, verification_view, \
     recover_password, UserListAPIView
+from rest_framework.permissions import AllowAny
 
 
 app_name = UsersConfig.name
@@ -28,6 +29,6 @@ urlpatterns = [
          PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
     path('users/', UserListAPIView.as_view(), name='users'),
-    path('login/', MyTokenObtainPairView.as_view(), name='login'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('login/', MyTokenObtainPairView.as_view(permissions=(AllowAny, )), name='login'),
+    path('token/refresh/', TokenRefreshView.as_view(permissions=(AllowAny, )), name='token_refresh')
 ]

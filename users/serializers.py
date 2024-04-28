@@ -21,7 +21,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Добавление пользовательских полей в токен
-        token['username'] = user.username
+
         token['email'] = user.email
 
         return token
