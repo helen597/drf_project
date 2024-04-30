@@ -90,8 +90,8 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),  # Название БД
         'USER': os.getenv('DB_USER'),  # Пользователь для подключения
         'PASSWORD': os.getenv('DB_PASSWORD'),  # Пароль для этого пользователя
-        'HOST': '127.0.0.1',  # Адрес, на котором развернут сервер БД
-        'PORT': 5432,  # Порт, на котором работает сервер БД
+        'HOST': os.getenv('POSTGRES_HOST'),  # Адрес, на котором развернут сервер БД
+        'PORT': os.getenv('POSTGRES_PORT'),  # Порт, на котором работает сервер БД
     }
 }
 
