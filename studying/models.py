@@ -11,6 +11,7 @@ class Course(models.Model):
     description = models.CharField(max_length=300, verbose_name='Описание', **NULLABLE)
     image = models.ImageField(upload_to='courses/', verbose_name='Изображение', **NULLABLE)
     owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Владелец')
+    video_link = models.CharField(max_length=300, verbose_name='Ссылка на видео', **NULLABLE)
 
     def __str__(self):
         return f'{self.title}'
