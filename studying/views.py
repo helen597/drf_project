@@ -103,8 +103,7 @@ class SubscriptionAPIView(APIView):
             Subscription.objects.delete(pk=subs_item.pk)
             message = 'Подписка удалена'
         else:
-            new_sub = Subscription(user=user, course=course)
-            new_sub.save()
+            new_sub = Subscription.objects.create(user=user, course=course)
             message = 'Подписка добавлена'
 
         return Response({"message": message})
