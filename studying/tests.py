@@ -29,4 +29,15 @@ class LessonTestCase(APITestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(data.get("title"), 'Lesson 2')
+        self.assertEqual(Lesson.objects.all().count(), 2)
+
+    def test_lesson_update(self):
+        url = reverse('studying:lessons-update', args=(self.lesson.pk, ))
+        data = {
+            'title': 'Lesson 1. Present Simple'
+        }
+        response = self.client.patch(url, data)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data.get("title"), 'Lesson 1. Present Simple')
+
