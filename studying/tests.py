@@ -13,11 +13,12 @@ class LessonTestCase(APITestCase):
         self.user.set_password('59hl71ee')
         self.client.force_authenticate(user=self.user)
         self.course = Course.objects.create(title="English", owner=self.user)
-        self.lesson = Lesson.objects.create(title='Lesson 1', course=self.course, owner=self.user)
+        self.lesson = Lesson.objects.create(title='Lesson 1', course=self.course, owner=self.user, video_link='youtube.com/ghfjgbkjbg')
 
     def test_lesson_retrieve(self):
         url = reverse('studying:lessons-get', args=(self.lesson.pk, ))
         response = self.client.get(url)
+        print('\ntest_lesson_retrieve')
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("title"), self.lesson.title)
@@ -27,9 +28,11 @@ class LessonTestCase(APITestCase):
         data = {
             'title': 'Lesson 2',
             'course': self.course.pk,
-            'owner': self.user.pk
+            'owner': self.user.pk,
+            'video_link': 'youtube.com/ghfjgbkjbg'
         }
         response = self.client.post(url, data)
+        print('\ntest_lesson_create')
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Lesson.objects.all().count(), 2)
@@ -37,10 +40,12 @@ class LessonTestCase(APITestCase):
     def test_lesson_update(self):
         url = reverse('studying:lessons-update', args=(self.lesson.pk, ))
         data = {
-            'title': 'Lesson 1. Present Simple'
+            'title': 'Lesson 1. Present Simple',
+            'video_link': 'youtube.com/ghfjgbkjbg'
         }
         response = self.client.patch(url, data)
         data = response.json()
+        print('\ntest_lesson_update')
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("title"), 'Lesson 1. Present Simple')
@@ -48,6 +53,7 @@ class LessonTestCase(APITestCase):
     def test_lesson_delete(self):
         url = reverse('studying:lessons-delete', args=(self.lesson.pk, ))
         response = self.client.delete(url)
+        print('\ntest_lesson_delete')
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Lesson.objects.all().count(), 0)
@@ -55,5 +61,7 @@ class LessonTestCase(APITestCase):
     def test_lesson_list(self):
         url = reverse('studying:lessons-list')
         response = self.client.get(url)
+        print('\ntest_lesson_list')
+        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Lesson.objects.all().count(), 1)
