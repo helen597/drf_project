@@ -893,7 +893,7 @@
     "model": "users.user",
     "pk": 2,
     "fields": {
-      "password": "ji6729",
+      "password": "59hl71ee",
       "last_login": null,
       "is_superuser": false,
       "first_name": "Ольга",

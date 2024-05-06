@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 from users.models import User
-from studying.models import Course, Lesson
+from studying.models import Course, Lesson, Subscription
 from django.urls import reverse
 from rest_framework import status
 
@@ -10,9 +10,10 @@ class LessonTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(email="helen597@yandex.ru")
-        self.course = Course.objects.create(title="English")
-        self.lesson = Lesson.objects.create(title='Lesson 1', course=self.course, owner=self.user)
+        self.user.set_password('59hl71ee')
         self.client.force_authenticate(user=self.user)
+        self.course = Course.objects.create(title="English", owner=self.user)
+        self.lesson = Lesson.objects.create(title='Lesson 1', course=self.course, owner=self.user)
 
     def test_lesson_retrieve(self):
         url = reverse('studying:lessons-get', args=(self.lesson.pk, ))
@@ -25,7 +26,8 @@ class LessonTestCase(APITestCase):
         url = reverse('studying:lessons-create')
         data = {
             'title': 'Lesson 2',
-            'course': self.course
+            'course': self.course,
+            'owner': self.user
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
