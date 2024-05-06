@@ -26,10 +26,11 @@ class LessonTestCase(APITestCase):
         url = reverse('studying:lessons-create')
         data = {
             'title': 'Lesson 2',
-            'course': self.course,
-            'owner': self.user
+            'course': self.course.pk,
+            'owner': self.user.pk
         }
         response = self.client.post(url, data)
+        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Lesson.objects.all().count(), 2)
 
@@ -40,6 +41,19 @@ class LessonTestCase(APITestCase):
         }
         response = self.client.patch(url, data)
         data = response.json()
+        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("title"), 'Lesson 1. Present Simple')
 
+    def test_lesson_delete(self):
+        url = reverse('studying:lessons-delete', args=(self.lesson.pk, ))
+        response = self.client.delete(url)
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Lesson.objects.all().count(), 0)
+
+    def test_lesson_list(self):
+        url = reverse('studying:lessons-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Lesson.objects.all().count(), 1)
