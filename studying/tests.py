@@ -54,11 +54,12 @@ class LessonTestCase(APITestCase):
 
     def test_lesson_delete(self):
         url = reverse('studying:lessons-delete', args=(self.lesson.pk,))
+        # self.lesson.owner = self.user
         response = self.client.delete(url)
         print('\ntest_lesson_delete')
-        print('Пользователь: ', self.user)
+        print('Пользователь: ', self.user.pk)
         print('Модератор: ', self.user.is_staff)
-        print('Владелец: ', self.lesson.owner)
+        print('Владелец: ', self.lesson.owner.pk)
         print('Авторизован: ', self.user.is_authenticated)
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
