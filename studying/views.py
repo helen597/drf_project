@@ -89,7 +89,12 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 class PaymentCreateAPIView(generics.CreateAPIView):
     """Payment create endpoint"""
     serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
     permission_classes = [IsAuthenticated]
+
+
+    def perform_create(self, serializer):
+        pass
 
     def get(self, *args, **kwargs):
         try:
