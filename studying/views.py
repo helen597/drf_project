@@ -1,5 +1,4 @@
 import requests
-import stripe
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,7 +14,7 @@ from users.models import Payment
 from studying.models import Course, Lesson, Subscription
 from studying.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 from rest_framework import status
-from config.settings import STRIPE_API_KEY
+from services import create_product, create_price, create_session
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -92,9 +91,15 @@ class PaymentCreateAPIView(generics.CreateAPIView):
     queryset = Payment.objects.all()
     permission_classes = [IsAuthenticated]
 
-
     def perform_create(self, serializer):
-        pass
+        payment = serializer.save(user=self.request.user)
+        product = payment.paid_lesson if payment.paid_lesson else payment.paid_course
+        stripe_product = create_product(product)
+        price = create_price(product.price)
+        session_id, payment_link = create_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
 
     def get(self, *args, **kwargs):
         try:

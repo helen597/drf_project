@@ -4,6 +4,9 @@ from studying.validators import VideoLinkValidator
 from users.serializers import UserSerializer
 
 
+# from users.serializers import UserSerializer
+
+
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson

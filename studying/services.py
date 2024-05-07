@@ -13,7 +13,7 @@ def create_product(product):
 
 def create_price(amount):
     """Create stripe price"""
-    stripe_price = stripe.Price.create(product.price, currency='rub', amount=amount * 100, product_data={"name": "Payment"})
+    stripe_price = stripe.Price.create(currency='rub', amount=amount * 100, product_data={"name": "Payment"})
     return stripe_price.get("id")
 
 
