@@ -15,7 +15,7 @@ from users.models import Payment
 from studying.models import Course, Lesson, Subscription
 from studying.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 from rest_framework import status
-# import settings
+from config.settings import STRIPE_API_KEY
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -93,6 +93,7 @@ class PaymentCreateAPIView(generics.CreateAPIView):
 
     def get(self, *args, **kwargs):
         try:
+            product = stripe.Product.create()
             headers = {'Authorization': 'Token my_token'}
             params = {'page': 1, 'limit': 10}
             response = requests.get('https://api.example.com/data', headers=headers, params=params)
