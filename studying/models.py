@@ -12,7 +12,7 @@ class Course(models.Model):
     image = models.ImageField(upload_to='courses/', verbose_name='Изображение', **NULLABLE)
     owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Владелец')
     video_link = models.CharField(max_length=300, verbose_name='Ссылка на видео', **NULLABLE)
-    price = models.IntegerField(default=1000, verbose_name='стоимость курса')
+    price = models.PositiveIntegerField(default=1000, verbose_name='стоимость курса')
 
     def __str__(self):
         return f'{self.title}'
@@ -30,7 +30,7 @@ class Lesson(models.Model):
     video_link = models.CharField(max_length=300, verbose_name='Ссылка на видео', **NULLABLE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
     owner = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Владелец')
-    price = models.IntegerField(default=1000, verbose_name='стоимость урока')
+    price = models.PositiveIntegerField(default=1000, verbose_name='стоимость урока')
 
     def __str__(self):
         return f'{self.title}'
