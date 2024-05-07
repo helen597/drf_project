@@ -1,3 +1,5 @@
+import requests
+import stripe
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -5,16 +7,19 @@ from django.shortcuts import get_object_or_404
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from requests.exceptions import RequestException
 from studying.paginators import MyPagination
 from users.permissions import IsModer, IsOwner
 from users.serializers import PaymentSerializer
 from users.models import Payment
 from studying.models import Course, Lesson, Subscription
 from studying.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
+from rest_framework import status
+# import settings
 
 
 class CourseViewSet(viewsets.ModelViewSet):
+    """Viewset for courses"""
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     # permission_classes = [IsAuthenticated]
@@ -36,6 +41,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
+    """Lesson create endpoint"""
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, ~IsModer]
 
@@ -46,6 +52,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 
 class LessonListAPIView(generics.ListAPIView):
+    """Lesson list endpoint"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated]
@@ -59,29 +66,45 @@ class LessonListAPIView(generics.ListAPIView):
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
+    """Lesson retrieve endpoint"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
+    """Lesson update endpoint"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
 
         
 class LessonDestroyAPIView(generics.DestroyAPIView):
+    """Lesson delete endpoint"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, ~IsModer, IsOwner]
 
 
 class PaymentCreateAPIView(generics.CreateAPIView):
+    """Payment create endpoint"""
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
 
+    def get(self, *args, **kwargs):
+        try:
+            headers = {'Authorization': 'Token my_token'}
+            params = {'page': 1, 'limit': 10}
+            response = requests.get('https://api.example.com/data', headers=headers, params=params)
+            response.raise_for_status()
+            data = response.json()
+            return Response(data)
+        except RequestException as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class PaymentListAPIView(generics.ListAPIView):
+    """Payment list endpoint"""
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -91,6 +114,7 @@ class PaymentListAPIView(generics.ListAPIView):
 
 
 class SubscriptionAPIView(APIView):
+    """Lesson update endpoint"""
     serializer_class = SubscriptionSerializer
 
     def post(self, *args, **kwargs):
