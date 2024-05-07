@@ -9,12 +9,11 @@ from rest_framework.response import Response
 from requests.exceptions import RequestException
 from studying.paginators import MyPagination
 from users.permissions import IsModer, IsOwner
-from users.serializers import PaymentSerializer
 from users.models import Payment
 from studying.models import Course, Lesson, Subscription
-from studying.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
+from studying.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer, PaymentSerializer
 from rest_framework import status
-from services import create_product, create_price, create_session
+from studying.services import create_product, create_price, create_session
 
 
 class CourseViewSet(viewsets.ModelViewSet):

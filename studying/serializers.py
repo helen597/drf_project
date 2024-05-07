@@ -1,10 +1,8 @@
 from rest_framework import serializers
 from studying.models import Course, Lesson, Subscription
 from studying.validators import VideoLinkValidator
+from users.models import Payment
 from users.serializers import UserSerializer
-
-
-# from users.serializers import UserSerializer
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -30,6 +28,15 @@ class CourseSerializer(serializers.ModelSerializer):
     def get_subscription(self, instance):
         user = self.request.user
         return Subscription.objects.all().filter(user=user).filter(course=instance).exists()
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    paid_course = CourseSerializer(read_only=True)
+    paid_lesson = LessonSerializer(read_only=True)
+
+    class Meta:
+        model = Payment
+        fields = '__all__'
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
