@@ -102,6 +102,7 @@ class PaymentCreateAPIView(generics.CreateAPIView):
         except serializers.ValidationError("Выберите урок или курс для оплаты") as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class PaymentListAPIView(generics.ListAPIView):
     """Payment list endpoint"""
     serializer_class = PaymentSerializer
