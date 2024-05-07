@@ -21,6 +21,7 @@ class LessonTestCase(APITestCase):
         response = self.client.get(url)
         print('\ntest_lesson_retrieve')
         data = response.json()
+        print(data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("title"), self.lesson.title)
 
@@ -55,6 +56,10 @@ class LessonTestCase(APITestCase):
         url = reverse('studying:lessons-delete', args=(self.lesson.pk,))
         response = self.client.delete(url)
         print('\ntest_lesson_delete')
+        print('Пользователь: ', self.user)
+        print('Модератор: ', self.user.is_staff)
+        print('Владелец: ', self.lesson.owner)
+        print('Авторизован: ', self.user.is_authenticated)
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Lesson.objects.all().count(), 0)
@@ -77,23 +82,26 @@ class SubscriptionTestCase(APITestCase):
         self.course = Course.objects.create(title="English", owner=self.user)
 
     def test_subscribe(self):
-        url = reverse('studying:subscribe')
+        url = reverse('studying:subscribe', args=(self.course.pk,))
         data = {
             "user": self.user.pk,
             "course": self.course.pk,
         }
         response = self.client.post(url, data)
-        data = response.json(),
+        data = response.json()
+        print(data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data, {'message': 'Подписка добавлена'})
 
     def test_unsubscribe(self):
-        url = reverse('studying:subscribe')
+        url = reverse('studying:subscribe', args=(self.course.pk,))
         subscription = Subscription.objects.create(course=self.course, user=self.user)
         data = {
+            "user": self.user.pk,
             "course": self.course.pk,
         }
         response = self.client.post(url, data)
         data = response.json()
+        print(data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data, {'message': 'Подписка удалена'})

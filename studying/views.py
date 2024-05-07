@@ -99,8 +99,8 @@ class SubscriptionAPIView(APIView):
         course = get_object_or_404(Course, pk=course_id)
         subs_item = Subscription.objects.all().filter(user=user).filter(course=course).first()
 
-        if subs_item.exists():
-            Subscription.objects.delete(pk=subs_item.pk)
+        if subs_item:
+            subs_item.delete()
             message = 'Подписка удалена'
         else:
             new_sub = Subscription.objects.create(user=user, course=course)
