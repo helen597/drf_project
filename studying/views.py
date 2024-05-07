@@ -1,12 +1,11 @@
 import requests
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, serializers
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from requests.exceptions import RequestException
 from studying.paginators import MyPagination
 from users.permissions import IsModer, IsOwner
 from users.models import Payment
@@ -76,7 +75,7 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModer | IsOwner]
 
-        
+
 class LessonDestroyAPIView(generics.DestroyAPIView):
     """Lesson delete endpoint"""
     serializer_class = LessonSerializer
@@ -91,35 +90,25 @@ class PaymentCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        payment = serializer.save(user=self.request.user)
-        product = payment.paid_lesson if payment.paid_lesson else payment.paid_course
-        stripe_product = create_product(product)
-        price = create_price(product.price)
-        session_id, payment_link = create_session(price)
-        payment.session_id = session_id
-        payment.link = payment_link
-        payment.save()
-
-    def get(self, *args, **kwargs):
         try:
-            product = stripe.Product.create()
-            headers = {'Authorization': 'Token my_token'}
-            params = {'page': 1, 'limit': 10}
-            response = requests.get('https://api.example.com/data', headers=headers, params=params)
-            response.raise_for_status()
-            data = response.json()
-            return Response(data)
-        except RequestException as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            payment = serializer.save(user=self.request.user)
+            product = payment.paid_lesson if payment.paid_lesson else payment.paid_course
+            stripe_product = create_product(product)
+            price = create_price(product.price, stripe_product)
+            session_id, payment_link = create_session(price)
+            payment.session_id = session_id
+            payment.link = payment_link
+            payment.save()
+        except serializers.ValidationError("Выберите урок или курс для оплаты") as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PaymentListAPIView(generics.ListAPIView):
     """Payment list endpoint"""
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ('paid_course', 'paid_lesson', 'method',  )
-    ordering_fields = ('date', )
+    filterset_fields = ('paid_course', 'paid_lesson', 'method',)
+    ordering_fields = ('date',)
     permission_classes = [IsAuthenticated]
 
 

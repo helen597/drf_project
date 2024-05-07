@@ -11,9 +11,9 @@ def create_product(product):
     return stripe_product.get("id")
 
 
-def create_price(amount):
+def create_price(amount, product):
     """Create stripe price"""
-    stripe_price = stripe.Price.create(currency='rub', amount=amount * 100, product_data={"name": "Payment"})
+    stripe_price = stripe.Price.create(currency='rub', unit_amount=amount * 100, product_data={"name": "Payment"}, product=product)
     return stripe_price.get("id")
 
 
