@@ -80,7 +80,7 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     """Lesson delete endpoint"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, ~IsModer, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner | ~IsModer]
 
 
 class PaymentCreateAPIView(generics.CreateAPIView):
