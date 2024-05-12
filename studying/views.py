@@ -7,6 +7,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from studying.paginators import MyPagination
+from studying.tasks import send_email
 from users.permissions import IsModer, IsOwner
 from users.models import Payment
 from studying.models import Course, Lesson, Subscription
@@ -19,13 +20,16 @@ class CourseViewSet(viewsets.ModelViewSet):
     """Viewset for courses"""
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    # permission_classes = [IsAuthenticated]
     pagination_class = MyPagination
 
     def perform_create(self, serializer):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_email(course.pk, self.request.user)
 
     def get_permissions(self):
         if self.action in ["retrieve", "update"]:
