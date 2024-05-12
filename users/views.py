@@ -2,8 +2,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, DestroyAPIView
 from users.serializers import MyTokenObtainPairSerializer, UserSerializer
-import secrets
-import string
+import secrets, string, pytz
+from datetime import datetime
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -24,6 +24,13 @@ class UserCreateAPIView(CreateAPIView):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+    def perform_authentication(self, request):
+        user = User.objects.filter(verification_code=self.request.token).first()
+        if user:
+            zone = pytz.timezone(settings.TIME_ZONE)
+            user.last_login = datetime.now(zone)
+            user.save()
 
 
 class UserUpdateAPIView(UpdateAPIView):

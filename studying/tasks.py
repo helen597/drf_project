@@ -12,7 +12,6 @@ def send_email(pk, user):
     email_list = [user.email for subs.user in subs]
     message_subject = f'Обновление курса {course}'
     message_text = f'Обновление курса {course}'
-    server_response = "От сервера ответа нет"
     try:
         server_response = send_mail(
             subject=message_subject,
@@ -21,13 +20,6 @@ def send_email(pk, user):
             recipient_list=email_list,
             fail_silently=False,
         )
-
     except smtplib.SMTPException as e:
         server_response = e
     return server_response
-
-
-@shared_task
-def my_task():
-    # Код задачи
-    pass
