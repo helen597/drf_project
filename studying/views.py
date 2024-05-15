@@ -1,4 +1,3 @@
-import requests
 from rest_framework import viewsets, generics, serializers
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -29,7 +28,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         course = serializer.save()
-        send_email(course.pk, self.request.user)
+        send_email.delay(course.pk, self.request.user)
 
     def get_permissions(self):
         if self.action in ["retrieve", "update"]:
@@ -131,7 +130,7 @@ class SubscriptionAPIView(APIView):
             subs_item.delete()
             message = 'Подписка удалена'
         else:
-            new_sub = Subscription.objects.create(user=user, course=course)
+            Subscription.objects.create(user=user, course=course)
             message = 'Подписка добавлена'
 
         return Response({"message": message})

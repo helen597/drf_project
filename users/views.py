@@ -2,7 +2,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, DestroyAPIView
 from users.serializers import MyTokenObtainPairSerializer, UserSerializer
-import secrets, string, pytz
+import secrets
+import string
+import pytz
 from datetime import datetime
 from django.core.mail import send_mail
 from django.shortcuts import redirect

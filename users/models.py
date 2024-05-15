@@ -8,7 +8,7 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name='почта')
     phone = models.CharField(max_length=35, verbose_name='телефон', **NULLABLE)
-    telegram = models.CharField(max_length=150, verbose_name='Telegram_id', **NULLABLE )
+    telegram = models.CharField(max_length=150, verbose_name='Telegram_id', **NULLABLE)
     country = models.CharField(max_length=100, verbose_name='страна', **NULLABLE)
     city = models.CharField(max_length=100, verbose_name='город', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
@@ -25,7 +25,7 @@ class User(AbstractUser):
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'
         ordering = ('email',)
-        
+
 
 class Payment(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='Пользователь')

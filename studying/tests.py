@@ -91,7 +91,7 @@ class SubscriptionTestCase(APITestCase):
 
     def test_unsubscribe(self):
         url = reverse('studying:subscribe', args=(self.course.pk,))
-        subscription = Subscription.objects.create(course=self.course, user=self.user)
+        Subscription.objects.create(course=self.course, user=self.user)
         data = {
             "user": self.user.pk,
             "course": self.course.pk,
