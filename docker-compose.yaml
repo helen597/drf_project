@@ -4,6 +4,8 @@ services:
     redis:
         image: redis:latest
         restart: on-failure
+        expose:
+            - "5432"
     db:
         image: postgres
         restart: on-failure
@@ -29,6 +31,8 @@ services:
                 condition: service_healthy
         volumes:
             - .:/app
+        env_file:
+            - .env
     celery:
         build: .
         tty: true
@@ -40,6 +44,8 @@ services:
             - app
         volumes:
             - .:/app
+        env_file:
+            - .env
     celery-beat:
         build: .
         tty: true
@@ -51,5 +57,7 @@ services:
             - app
         volumes:
             - .:/app
+        env_file:
+            - .env
 volumes:
     pg_data:
